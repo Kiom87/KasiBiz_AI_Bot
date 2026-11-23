@@ -1,0 +1,53 @@
+Create Environment:
+
+1.python -m venv venv
+
+2.venv\Scripts\Activate.ps1
+
+
+That's exactly the execution-policy block I flagged earlier — 
+PowerShell won't run unsigned local scripts by default. 
+Fix it with this, run once in the same terminal:
+ 2.1 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+If fails try this
+ 2.2 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+ 2.3 venv\Scripts\activate.bat
+
+4.Point VS Code at it
+
+Ctrl+Shift+P → "Python: Select Interpreter" → choose the one showing 
+.\venv\Scripts\python.exe. 
+This makes the editor (IntelliSense, debugging) use the same environment as your terminal.
+
+5.Install the project's dependencies
+
+Since your repo already has a requirements.txt, just run:
+
+powershell
+pip install -r requirements.txt
+
+6. Set up your local .env
+
+I can see a .env.example in your repo tree — 
+copy it to create your own local copy 
+(your .gitignore keeps .env and .env.local out of Git, so this stays private to you):
+
+
+
+Pull the latest changes from GitHub before you start each session. 
+In the VS Code terminal, at your project root:
+powershell
+git pull
+
+If you have uncommitted local changes and need to pull anyway, save them first so nothing's lost:
+
+git status              # see what's changed locally
+git stash                # temporarily shelves your changes
+git pull                 # now pulls cleanly
+git stash pop            # brings your changes back on top
+
+If requirements.txt was updated (the admin added a new library), reinstall after pulling so your environment matches:
+
+powershell
+venv\Scripts\Activate.ps1
+pip install -r requirements.txt
